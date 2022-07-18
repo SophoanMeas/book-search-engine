@@ -6,12 +6,12 @@ const resolvers = {
   Query: {
     me: async (parent, args, context) => {
       if (context.user) {
-        const userData = await User.findOne({ _id: context.user_id }).select(
-          '-__v -password'
-        );
+        const userData = await User.findOne({ _id: context.user._id })
+        .select('-__v -password');
 
         return userData;
       }
+
       throw new AuthenticationError('Not logged in');
     },
   },
@@ -31,9 +31,9 @@ const resolvers = {
         throw new AuthenticationError('Incorrect credentials');
       }
 
-      const correctPw = await user.isCorrectPassword(password);
+      const correctPwd = await user.isCorrectPassword(password);
 
-      if (!correctPw) {
+      if (!correctPwd) {
         throw new AuthenticationError('Incorrect credentials');
       }
 
@@ -42,31 +42,29 @@ const resolvers = {
     },
 
     saveBook: async (parent, { input }, context) => {
-      if (!context.user) {
-        throw new AuthenticationError('You must be logged in!');
+      if (context.user) {
+        const updatedUser = await User.findByIdAndUpdate(
+          { _id: context.user._id },
+          { $addToSet: { savedBooks: input } },
+          { new: true }
+        );
+        return updatedUser;
       }
-
-      const updateUser = await User.ByIdAndUpdate(
-        { _id: context.user._id },
-        { $addToSet: { savedBooks: input } },
-        { new: true }
-      );
-      return updateUser;
+      throw new AuthenticationError('You need to be logged in!')
     },
 
     removeBook: async (parent, args, context) => {
-      if (!context.user) {
-        throw new AuthenticationError('You must be logged in!');
+      if (context.user) {
+        const updatedUser = await User.findOneAndUpdate(
+          { _id: context.user._id },
+          { $pull: { savedBooks: { bookId: args.bookId } } },
+          { new: true }
+        );
+        return updatedUser;
       }
-
-      const updateUser = await User.findOneAndUpdate(
-        { _id: context.user._id },
-        { $pull: { savedBooks: { bookId: args.bookId } } },
-        { new: true }
-      );
-      return updateUser;
-    },
-  },
+      throw new AuthenticationError('You need to be logged in!')
+    }
+  } 
 };
 
 module.exports = resolvers;
