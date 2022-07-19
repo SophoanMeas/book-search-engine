@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/book-search-engine', {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/book-search-engine', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
 // Use this to log mongo queries being executed!
-mongoose.set('debug', true);
+// mongoose.set('debug', true);
 
 module.exports = mongoose.connection;
