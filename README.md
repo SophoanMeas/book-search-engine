@@ -41,7 +41,7 @@ The application consist of a client side and the server side
 # Usage
 ### Application
 
-* <a href="https://book-search-engine-pon.herokuapp.com/" target="_blank"><h4> *Bugdget Tracker*</a>
+* <a href="https://book-search-engine-pon.herokuapp.com/" target="_blank"><h4> *Book Search*</a>
 # Technologies
 Server Side
 * apollo server
